@@ -2,9 +2,21 @@
 
 Credentials are read from environment variables at runtime — never hardcoded.
 See .env.example for the full list of required variables.
+
+Loads a local `.env` file automatically if `python-dotenv` is installed, so any
+consumer (scripts, the aggregator, tests) just has to `import toast_config` and
+the env vars will already be populated. In GitHub Actions the .env file won't
+exist and that's fine — env vars come from repo Secrets instead.
 """
 
 import os
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # python-dotenv is optional; env vars can also come from the shell or CI Secrets.
+    pass
 
 # API endpoints
 ORDERS_BULK_URL = "https://ws-api.toasttab.com/orders/v2/ordersBulk"
