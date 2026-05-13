@@ -1,0 +1,63 @@
+name: Hourly fundraiser aggregator
+
+on:
+  schedule:
+    # Top of every hour, UTC. GitHub Actions can delay scheduled runs by a few
+    # minutes under load — fine for our hourly cadence.
+    - cron: "0 * * * *"
+  workflow_dispatch: {}   # manual run button in the Actions tab
+
+# We commit + push the updated totals + snapshot back to main, so we need write access.
+permissions:
+  contents: write
+
+# If a previous run is still going (e.g. Toast was slow), cancel it so we don't pile up.
+concurrency:
+  group: hourly-aggregator
+  cancel-in-progress: true
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25       # Toast pull is ~5-10 min; this is a comfortable ceiling.
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run the aggregator
+        env:
+          # Toast — both brands
+          TOAST_KIZUKI_CLIENT_ID:     ${{ secrets.TOAST_KIZUKI_CLIENT_ID }}
+          TOAST_KIZUKI_CLIENT_SECRET: ${{ secrets.TOAST_KIZUKI_CLIENT_SECRET }}
+          TOAST_SD_CLIENT_ID:         ${{ secrets.TOAST_SD_CLIENT_ID }}
+          TOAST_SD_CLIENT_SECRET:     ${{ secrets.TOAST_SD_CLIENT_SECRET }}
+          # Stripe — QR donation Payment Link
+          STRIPE_API_KEY:             ${{ secrets.STRIPE_API_KEY }}
+          STRIPE_PAYMENT_LINK_ID:     ${{ secrets.STRIPE_PAYMENT_LINK_ID }}
+          # Shopify — Dev Dashboard OAuth credentials
+          SHOPIFY_CLIENT_ID:          ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET:      ${{ secrets.SHOPIFY_CLIENT_SECRET }}
+          SHOPIFY_STORE_DOMAIN:       ${{ secrets.SHOPIFY_STORE_DOMAIN }}
+        run: python3 aggregate.py
+
+      - name: Commit updated totals + snapshot
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/totals.json snapshots/
+          if git diff --quiet --staged; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: hourly aggregate run [skip ci]"
+            git push
+          fi

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Standing with Chaniya — Fundraiser Tracker</title>
+<style>
+  :root {
+    --color-text: #1c1917;
+    --color-muted: #57534e;
+    --color-degraded-bg: #fef3c7;
+    --color-degraded-fg: #92400e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: transparent; }
+
+  body {
+    color: var(--color-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 24px 16px;
+    text-align: center;
+  }
+
+  .container { max-width: 640px; margin: 0 auto; }
+
+  .label {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 10px;
+  }
+
+  .total {
+    font-size: clamp(44px, 9vw, 88px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+  }
+
+  .updated {
+    font-size: 13px;
+    color: var(--color-muted);
+    margin-top: 14px;
+  }
+
+  .sources-note {
+    margin-top: 20px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-muted);
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .degraded {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: var(--color-degraded-bg);
+    color: var(--color-degraded-fg);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .error { color: #991b1b; font-size: 14px; }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-text: #f5f5f4;
+      --color-muted: #a8a29e;
+      --color-degraded-bg: #422006;
+      --color-degraded-fg: #fed7aa;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container" id="root">
+    <div class="label">Loading total…</div>
+  </div>
+
+  <script>
+    const REFRESH_MS = 5 * 60 * 1000;  // re-fetch totals.json every 5 minutes
+
+    // Public-facing disclaimer listing the contributing sources. Per-source
+    // dollar amounts stay internal-only — they live in totals.json for record-
+    // keeping but are not displayed here.
+    const SOURCES_DISCLAIMER =
+      "Combined total from POS round-ups, fundraiser menu items & vouchers, " +
+      "online frozen XLB sales, GoFundMe contributions, and in-store donations.";
+
+    async function loadTotals() {
+      try {
+        const resp = await fetch("totals.json?_=" + Date.now(), { cache: "no-cache" });
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const data = await resp.json();
+        render(data);
+      } catch (err) {
+        console.error("Failed to load totals.json:", err);
+        document.getElementById("root").innerHTML =
+          '<div class="error">Total temporarily unavailable. Please try again in a moment.</div>';
+      }
+    }
+
+    function formatMoney(n, opts = {}) {
+      const { decimals = 2 } = opts;
+      return "$" + n.toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      });
+    }
+
+    function formatUpdated(isoString) {
+      const d = new Date(isoString);
+      const datePart = d.toLocaleString("en-US", {
+        timeZone: "America/Los_Angeles",
+        month: "short", day: "numeric",
+      });
+      const timePart = d.toLocaleString("en-US", {
+        timeZone: "America/Los_Angeles",
+        hour: "numeric", minute: "2-digit", hour12: true,
+      });
+      return `${datePart} at ${timePart} PT`;
+    }
+
+    function render(data) {
+      const degradedBadge = data.degraded
+        ? '<div class="degraded">Live total temporarily stale</div>'
+        : "";
+
+      document.getElementById("root").innerHTML = `
+        <div class="label">Total raised for Chaniya</div>
+        <div class="total">${formatMoney(data.grand_total)}</div>
+        <div class="updated">Updated ${formatUpdated(data.fetched_at_utc)}</div>
+        <div class="sources-note">${SOURCES_DISCLAIMER}</div>
+        ${degradedBadge}
+      `;
+    }
+
+    loadTotals();
+    setInterval(loadTotals, REFRESH_MS);
+  </script>
+</body>
+</html>

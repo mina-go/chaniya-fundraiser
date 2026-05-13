@@ -1,0 +1,204 @@
+{
+  "campaign": "chaniya-may-2026",
+  "campaign_window_local": {
+    "start": "2026-05-01T00:00:00-07:00",
+    "end": "2026-06-01T00:00:00-07:00",
+    "timezone": "America/Los_Angeles"
+  },
+  "grand_total": 18228.46,
+  "currency": "USD",
+  "fetched_at_utc": "2026-05-13T00:38:17.628765+00:00",
+  "degraded": false,
+  "by_source": {
+    "toast": {
+      "source": "toast",
+      "campaign_total": 5812.06,
+      "currency": "USD",
+      "fetched_at_utc": "2026-05-13T00:46:32.828439+00:00",
+      "raw_breakdown": {
+        "menu_item_sales": 4954.03,
+        "round_ups": 858.03,
+        "by_brand": {
+          "Kizuki": {
+            "menu_item_sales": 3720.1,
+            "round_ups": 684.86,
+            "by_store": {
+              "BKBEL": {
+                "name": "Kizuki Bellevue",
+                "n_orders": 1452,
+                "menu_item_sales": 197.92,
+                "round_ups": 48.2
+              },
+              "CHSLU": {
+                "name": "Kizuki Capitol Hill",
+                "n_orders": 1329,
+                "menu_item_sales": 38.5,
+                "round_ups": 25.38
+              },
+              "REDMN": {
+                "name": "Kizuki Redmond",
+                "n_orders": 2191,
+                "menu_item_sales": 430.05,
+                "round_ups": 50.61
+              },
+              "WSEAT": {
+                "name": "Kizuki West Seattle",
+                "n_orders": 928,
+                "menu_item_sales": 22.0,
+                "round_ups": 27.44
+              },
+              "KZALD": {
+                "name": "Kizuki Alderwood Mall",
+                "n_orders": 2283,
+                "menu_item_sales": 408.46,
+                "round_ups": 56.69
+              },
+              "BSQML": {
+                "name": "Kizuki Bellevue Square",
+                "n_orders": 2319,
+                "menu_item_sales": 26.95,
+                "round_ups": 50.33
+              },
+              "NGKMD": {
+                "name": "Kizuki Northgate",
+                "n_orders": 1821,
+                "menu_item_sales": 324.2,
+                "round_ups": 49.26
+              },
+              "RNTCK": {
+                "name": "Kizuki Renton",
+                "n_orders": 757,
+                "menu_item_sales": 3.73,
+                "round_ups": 25.46
+              },
+              "SCMLL": {
+                "name": "Kizuki South Center",
+                "n_orders": 1641,
+                "menu_item_sales": 587.18,
+                "round_ups": 67.97
+              },
+              "TCMLL": {
+                "name": "Kizuki Tacoma",
+                "n_orders": 1819,
+                "menu_item_sales": 500.28,
+                "round_ups": 70.3
+              },
+              "BVORG": {
+                "name": "Kizuki Beaverton",
+                "n_orders": 1668,
+                "menu_item_sales": 414.83,
+                "round_ups": 85.34
+              },
+              "PFHDX": {
+                "name": "Kizuki Portland Food Hall",
+                "n_orders": 951,
+                "menu_item_sales": 100.0,
+                "round_ups": 26.74
+              },
+              "UPORG": {
+                "name": "Kizuki Uptown",
+                "n_orders": 862,
+                "menu_item_sales": 309.5,
+                "round_ups": 26.58
+              },
+              "KTTEX": {
+                "name": "Kizuki Katy",
+                "n_orders": 1664,
+                "menu_item_sales": 356.5,
+                "round_ups": 57.45
+              },
+              "LGTEX": {
+                "name": "Kizuki Legacy",
+                "n_orders": 444,
+                "menu_item_sales": 0.0,
+                "round_ups": 17.11
+              },
+              "KZCST": {
+                "name": "Kizuki Stonestown",
+                "n_orders": 2309,
+                "menu_item_sales": 0.0,
+                "round_ups": 0.0
+              }
+            }
+          },
+          "SD": {
+            "menu_item_sales": 1233.93,
+            "round_ups": 173.17,
+            "by_store": {
+              "SDBEL": {
+                "name": "Supreme Dumplings Bellevue",
+                "n_orders": 1429,
+                "menu_item_sales": 435.5,
+                "round_ups": 52.21
+              },
+              "SDKLD": {
+                "name": "Supreme Dumplings Kirkland",
+                "n_orders": 896,
+                "menu_item_sales": 183.13,
+                "round_ups": 24.79
+              },
+              "SDSLU": {
+                "name": "Supreme Dumplings SLU",
+                "n_orders": 2012,
+                "menu_item_sales": 275.75,
+                "round_ups": 44.86
+              },
+              "SDCST": {
+                "name": "Supreme Dumplings Stonestown",
+                "n_orders": 1782,
+                "menu_item_sales": 0.0,
+                "round_ups": 0.0
+              },
+              "SDTKT": {
+                "name": "Supreme Dumplings Katy",
+                "n_orders": 1152,
+                "menu_item_sales": 339.55,
+                "round_ups": 51.31
+              }
+            }
+          }
+        }
+      },
+      "failed": false
+    },
+    "shopify": {
+      "source": "shopify",
+      "campaign_total": 239.4,
+      "currency": "USD",
+      "fetched_at_utc": "2026-05-13T00:46:33.680750+00:00",
+      "raw_breakdown": {
+        "subtotal_minus_refunds": 239.4,
+        "n_orders_scanned": 3,
+        "n_orders_skipped_test_or_cancelled": 1,
+        "n_orders_with_refunds": 1
+      },
+      "failed": false
+    },
+    "stripe": {
+      "source": "stripe",
+      "campaign_total": 545.0,
+      "currency": "USD",
+      "fetched_at_utc": "2026-05-13T00:46:35.426300+00:00",
+      "raw_breakdown": {
+        "net_amount": 545.0,
+        "n_sessions_scanned": 120,
+        "n_sessions_paid": 16,
+        "n_sessions_incomplete_or_unpaid": 104,
+        "payment_link_id": "plink_1TTsaNEe7HY40ApxM8pRwvX2"
+      },
+      "failed": false
+    },
+    "gofundme": {
+      "source": "gofundme",
+      "campaign_total": 11632.0,
+      "currency": "USD",
+      "fetched_at_utc": "2026-05-13T00:46:36.150222+00:00",
+      "raw_breakdown": {
+        "raised_all_time": 11632.0,
+        "campaign_url": "https://www.gofundme.com/f/standing-with-chaniya-through-her-recovery",
+        "parse_strategy": "json_currentAmount"
+      },
+      "failed": false
+    }
+  }
+}
