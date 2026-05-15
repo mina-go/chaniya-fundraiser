@@ -47,6 +47,13 @@ logger = logging.getLogger(__name__)
 # Toast's serviceChargeCategory value for fundraising round-ups.
 FUNDRAISING_CATEGORY = "FUNDRAISING_CAMPAIGN"
 
+# Transient-error retry policy for Toast API page requests.
+# Toast occasionally returns a one-off 5xx mid-pagination; retrying the page
+# almost always succeeds and avoids discarding the whole multi-store pull.
+MAX_RETRIES = 4          # total attempts per page before giving up
+RETRY_BACKOFF_BASE = 3   # seconds; wait = RETRY_BACKOFF_BASE * 2^(attempt-1)
+REQUEST_TIMEOUT = 30     # seconds per HTTP request
+
 
 # ---------- helpers ----------
 
@@ -83,8 +90,69 @@ def _make_session(token: str) -> requests.Session:
     return s
 
 
+def _fetch_page(session, store, params, page):
+    """Fetch one page of orders for a store, retrying transient errors with backoff.
+
+    Retryable: HTTP 429 (rate limit), HTTP 5xx (Toast server hiccups), and
+    network-level errors (timeouts, connection resets). Non-retryable: 2xx
+    (success) and 4xx (real client errors — retrying won't help).
+
+    Raises RuntimeError only if every attempt is exhausted.
+    """
+    resp = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        headers_backup = session.headers.copy()
+        session.headers["Toast-Restaurant-External-ID"] = store["guid"]
+        try:
+            resp = session.get(ORDERS_BULK_URL, params=params, timeout=REQUEST_TIMEOUT)
+        except requests.exceptions.RequestException as exc:
+            # Network-level failure (timeout, connection reset, DNS). Treat as transient.
+            session.headers = headers_backup.copy()
+            if attempt < MAX_RETRIES:
+                wait = RETRY_BACKOFF_BASE * (2 ** (attempt - 1))
+                logger.warning(
+                    "  %s: network error on page %s (attempt %s/%s): %s — retrying in %ss",
+                    store["name"], page, attempt, MAX_RETRIES, exc, wait,
+                )
+                time.sleep(wait)
+                continue
+            raise RuntimeError(
+                f"{store['name']}: network error on page {page} after "
+                f"{MAX_RETRIES} attempts: {exc}"
+            )
+        session.headers = headers_backup.copy()
+
+        # Success or non-retryable client error (4xx) — stop retrying.
+        if resp.status_code < 500 and resp.status_code != 429:
+            break
+
+        # Transient (429 or 5xx) — back off and retry, unless attempts are exhausted.
+        if attempt < MAX_RETRIES:
+            if resp.status_code == 429:
+                wait = int(resp.headers.get("Retry-After", str(RETRY_BACKOFF_BASE * attempt)))
+            else:
+                wait = RETRY_BACKOFF_BASE * (2 ** (attempt - 1))
+            logger.warning(
+                "  %s: HTTP %s on page %s (attempt %s/%s) — retrying in %ss",
+                store["name"], resp.status_code, page, attempt, MAX_RETRIES, wait,
+            )
+            time.sleep(wait)
+
+    if not resp.ok:
+        raise RuntimeError(
+            f"{store['name']}: HTTP {resp.status_code} on page {page} after "
+            f"{MAX_RETRIES} attempts: {resp.text[:300]}"
+        )
+    return resp
+
+
 def _fetch_orders_for_store(session, store, start_dt, end_dt):
-    """Yield every order for one store within the [start_dt, end_dt) window."""
+    """Yield every order for one store within the [start_dt, end_dt) window.
+
+    Each page is fetched via _fetch_page, which retries transient errors (429,
+    5xx, network blips) with exponential backoff — so a single flaky page no
+    longer discards the whole multi-store pull.
+    """
     page = 1
     while True:
         params = {
@@ -93,20 +161,7 @@ def _fetch_orders_for_store(session, store, start_dt, end_dt):
             "page":      page,
             "pageSize":  PAGE_SIZE,
         }
-        headers_backup = session.headers.copy()
-        session.headers["Toast-Restaurant-External-ID"] = store["guid"]
-        resp = session.get(ORDERS_BULK_URL, params=params)
-        session.headers = headers_backup.copy()
-
-        if resp.status_code == 429:
-            wait = int(resp.headers.get("Retry-After", "5"))
-            logger.warning("  %s: 429 on page %s, sleeping %ss", store["name"], page, wait)
-            time.sleep(wait)
-            continue
-        if not resp.ok:
-            raise RuntimeError(
-                f"{store['name']}: HTTP {resp.status_code} on page {page}: {resp.text[:300]}"
-            )
+        resp = _fetch_page(session, store, params, page)
 
         data = resp.json()
         batch = data if isinstance(data, list) else data.get("orders", [])
