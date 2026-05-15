@@ -2,9 +2,13 @@ name: Hourly fundraiser aggregator
 
 on:
   schedule:
-    # Top of every hour, UTC. GitHub Actions can delay scheduled runs by a few
-    # minutes under load — fine for our hourly cadence.
-    - cron: "0 * * * *"
+    # Run at :37 past each hour, UTC. We deliberately avoid :00 — the top of the
+    # hour is GitHub Actions' highest-load window (everyone uses "0 * * * *"), and
+    # scheduled runs there are frequently delayed or dropped. An off-peak minute
+    # is meaningfully more reliable. GitHub scheduled runs are still best-effort,
+    # so a missed hour just means the next run self-corrects (every run re-queries
+    # the full campaign window).
+    - cron: "37 * * * *"
   workflow_dispatch: {}   # manual run button in the Actions tab
 
 # Permissions: write access to commit the updated totals + snapshot,
