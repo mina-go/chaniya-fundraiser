@@ -3,149 +3,142 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Standing with Chaniya — Fundraiser Tracker</title>
-<style>
-  :root {
-    --color-text: #1c1917;
-    --color-muted: #57534e;
-    --color-degraded-bg: #fef3c7;
-    --color-degraded-fg: #92400e;
-  }
+<title>Standing with Chaniya — Live Total</title>
+<!--
+  Minimal embed: the live grand total + a "last updated" timestamp. Nothing else.
+  Marketing wraps their own heading / layout / surrounding design around this
+  iframe in Wix.
 
+  Optional URL query parameters for styling — Marketing can self-serve the look
+  by editing the iframe `src` in Wix, no code changes needed:
+
+    size       number font size in px        ?size=80          (default 64)
+    weight     number font weight            ?weight=600       (default 700)
+    color      hex color, with or without #  ?color=7c3aed     (default auto: dark on light / light on dark)
+    decimals   digits after the dollar       ?decimals=0       (default 2)
+    align      left | center | right         ?align=left       (default center)
+    timestamp  on | off                      ?timestamp=off    (default on)
+
+  Combine freely:  index.html?size=80&color=7c3aed&align=left
+
+  The number + timestamp auto-refresh every 5 minutes while the page is open.
+-->
+<style>
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: transparent; }
 
   body {
-    color: var(--color-text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
-    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;        /* overridden by ?align= */
+    justify-content: center;
+    min-height: 100vh;
+    padding: 8px;
     text-align: center;
   }
 
-  .container { max-width: 640px; margin: 0 auto; }
+  #amount {
+    font-size: 64px;            /* overridden by ?size= */
+    font-weight: 700;           /* overridden by ?weight= */
+    color: #1c1917;             /* overridden by ?color=, or by dark mode below */
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
 
-  .label {
+  #updated {
+    margin-top: 6px;
     font-size: 13px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-    margin-bottom: 10px;
+    color: #57534e;
   }
 
-  .total {
-    font-size: clamp(44px, 9vw, 88px);
-    font-weight: 700;
-    line-height: 1.0;
-    letter-spacing: -0.02em;
-    color: var(--color-text);
-  }
-
-  .updated {
-    font-size: 13px;
-    color: var(--color-muted);
-    margin-top: 14px;
-  }
-
-  .sources-note {
-    margin-top: 20px;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--color-muted);
-    max-width: 520px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .degraded {
-    display: inline-block;
-    margin-top: 12px;
-    padding: 3px 10px;
-    border-radius: 4px;
-    background: var(--color-degraded-bg);
-    color: var(--color-degraded-fg);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  .error { color: #991b1b; font-size: 14px; }
+  .error { font-size: 14px !important; font-weight: 400 !important; color: #991b1b !important; }
 
   @media (prefers-color-scheme: dark) {
-    :root {
-      --color-text: #f5f5f4;
-      --color-muted: #a8a29e;
-      --color-degraded-bg: #422006;
-      --color-degraded-fg: #fed7aa;
-    }
+    #amount  { color: #f5f5f4; }
+    #updated { color: #a8a29e; }
   }
 </style>
 </head>
 <body>
-  <div class="container" id="root">
-    <div class="label">Loading total…</div>
-  </div>
+  <div id="amount">…</div>
+  <div id="updated"></div>
 
   <script>
-    const REFRESH_MS = 5 * 60 * 1000;  // re-fetch totals.json every 5 minutes
+    const REFRESH_MS = 5 * 60 * 1000;
+    const params = new URLSearchParams(location.search);
+    const amountEl = document.getElementById("amount");
+    const updatedEl = document.getElementById("updated");
 
-    // Public-facing disclaimer listing the contributing sources. Per-source
-    // dollar amounts stay internal-only — they live in totals.json for record-
-    // keeping but are not displayed here.
-    const SOURCES_DISCLAIMER =
-      "Combined total from POS round-ups, fundraiser menu items & vouchers, " +
-      "online frozen XLB sales, GoFundMe contributions, and in-store donations.";
+    // ----- apply styling from URL params -----
+    const sizeParam = parseInt(params.get("size"), 10);
+    if (!isNaN(sizeParam)) amountEl.style.fontSize = sizeParam + "px";
 
-    async function loadTotals() {
-      try {
-        const resp = await fetch("totals.json?_=" + Date.now(), { cache: "no-cache" });
-        if (!resp.ok) throw new Error("HTTP " + resp.status);
-        const data = await resp.json();
-        render(data);
-      } catch (err) {
-        console.error("Failed to load totals.json:", err);
-        document.getElementById("root").innerHTML =
-          '<div class="error">Total temporarily unavailable. Please try again in a moment.</div>';
-      }
+    if (params.get("weight")) amountEl.style.fontWeight = params.get("weight");
+
+    if (params.get("color")) {
+      let c = params.get("color").trim();
+      if (!c.startsWith("#")) c = "#" + c;
+      amountEl.style.color = c;   // inline style beats the dark-mode stylesheet rule
     }
 
-    function formatMoney(n, opts = {}) {
-      const { decimals = 2 } = opts;
+    const alignMap = { left: "flex-start", center: "center", right: "flex-end" };
+    const alignKey = (params.get("align") || "").toLowerCase();
+    if (alignMap[alignKey]) {
+      document.body.style.alignItems = alignMap[alignKey];
+      document.body.style.textAlign = alignKey;
+    }
+
+    let decimals = 2;
+    const decParam = params.get("decimals");
+    if (decParam !== null && !isNaN(parseInt(decParam, 10))) {
+      decimals = parseInt(decParam, 10);
+    }
+
+    const showTimestamp = (params.get("timestamp") || "on").toLowerCase() !== "off";
+    if (!showTimestamp) updatedEl.style.display = "none";
+
+    // ----- formatting helpers -----
+    function formatMoney(n) {
       return "$" + n.toLocaleString("en-US", {
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
       });
     }
 
-    function formatUpdated(isoString) {
-      const d = new Date(isoString);
+    function formatUpdated(iso) {
+      const d = new Date(iso);
       const datePart = d.toLocaleString("en-US", {
-        timeZone: "America/Los_Angeles",
-        month: "short", day: "numeric",
+        timeZone: "America/Los_Angeles", month: "short", day: "numeric",
       });
       const timePart = d.toLocaleString("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric", minute: "2-digit", hour12: true,
       });
-      return `${datePart} at ${timePart} PT`;
+      return `Updated ${datePart} at ${timePart} PT`;
     }
 
-    function render(data) {
-      const degradedBadge = data.degraded
-        ? '<div class="degraded">Live total temporarily stale</div>'
-        : "";
-
-      document.getElementById("root").innerHTML = `
-        <div class="label">Total raised for Chaniya</div>
-        <div class="total">${formatMoney(data.grand_total)}</div>
-        <div class="updated">Updated ${formatUpdated(data.fetched_at_utc)}</div>
-        <div class="sources-note">${SOURCES_DISCLAIMER}</div>
-        ${degradedBadge}
-      `;
+    // ----- fetch + render -----
+    async function loadTotal() {
+      try {
+        const resp = await fetch("totals.json?_=" + Date.now(), { cache: "no-cache" });
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const data = await resp.json();
+        amountEl.classList.remove("error");
+        amountEl.textContent = formatMoney(data.grand_total);
+        if (showTimestamp) updatedEl.textContent = formatUpdated(data.fetched_at_utc);
+      } catch (err) {
+        console.error("Failed to load totals.json:", err);
+        amountEl.classList.add("error");
+        amountEl.textContent = "Total unavailable";
+        updatedEl.textContent = "";
+      }
     }
 
-    loadTotals();
-    setInterval(loadTotals, REFRESH_MS);
+    loadTotal();
+    setInterval(loadTotal, REFRESH_MS);
   </script>
 </body>
 </html>
