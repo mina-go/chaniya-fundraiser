@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaniya Fundraiser — Live Number</title>
+<!--
+  Minimal embed: displays ONLY the live grand total, nothing else.
+  Marketing wraps their own heading / layout / design around this iframe in Wix.
+
+  Styling is controllable via URL query parameters so Marketing can self-serve
+  the look without code changes:
+
+    size      number, px font size              e.g. ?size=72        (default 64)
+    weight    font weight                       e.g. ?weight=600     (default 700)
+    color     hex color, with or without #      e.g. ?color=7c3aed   (default auto: dark on light / light on dark)
+    decimals  digits after the dollar           e.g. ?decimals=0     (default 2; use 0 for whole dollars)
+    align     left | center | right             e.g. ?align=left     (default center)
+
+  Combine freely:  number.html?size=80&color=7c3aed&decimals=0&align=left
+
+  The number auto-refreshes every 5 minutes while the page is open.
+-->
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: center;
+    justify-content: center;   /* overridden by ?align= */
+    min-height: 100vh;
+    padding: 4px 8px;
+  }
+
+  #amount {
+    font-size: 64px;           /* overridden by ?size= */
+    font-weight: 700;          /* overridden by ?weight= */
+    color: #1c1917;            /* overridden by ?color=, or by dark mode below */
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Default behavior only — if ?color= is set, the inline style wins over this. */
+  @media (prefers-color-scheme: dark) {
+    #amount { color: #f5f5f4; }
+  }
+
+  .error { font-size: 14px !important; font-weight: 400 !important; color: #991b1b !important; }
+</style>
+</head>
+<body>
+  <div id="amount">…</div>
+
+  <script>
+    const REFRESH_MS = 5 * 60 * 1000;
+    const params = new URLSearchParams(location.search);
+    const el = document.getElementById("amount");
+
+    // ----- apply styling from URL params -----
+    const sizeParam = parseInt(params.get("size"), 10);
+    if (!isNaN(sizeParam)) el.style.fontSize = sizeParam + "px";
+
+    if (params.get("weight")) el.style.fontWeight = params.get("weight");
+
+    if (params.get("color")) {
+      let c = params.get("color").trim();
+      if (!c.startsWith("#")) c = "#" + c;
+      el.style.color = c;   // inline style beats the dark-mode stylesheet rule
+    }
+
+    const alignMap = { left: "flex-start", center: "center", right: "flex-end" };
+    const align = alignMap[(params.get("align") || "").toLowerCase()];
+    if (align) document.body.style.justifyContent = align;
+
+    let decimals = 2;
+    const decParam = params.get("decimals");
+    if (decParam !== null && !isNaN(parseInt(decParam, 10))) {
+      decimals = parseInt(decParam, 10);
+    }
+
+    // ----- fetch + render the number -----
+    async function loadTotal() {
+      try {
+        const resp = await fetch("totals.json?_=" + Date.now(), { cache: "no-cache" });
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const data = await resp.json();
+        el.classList.remove("error");
+        el.textContent = "$" + data.grand_total.toLocaleString("en-US", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        });
+      } catch (err) {
+        console.error("Failed to load totals.json:", err);
+        el.classList.add("error");
+        el.textContent = "Total unavailable";
+      }
+    }
+
+    loadTotal();
+    setInterval(loadTotal, REFRESH_MS);
+  </script>
+</body>
+</html>
