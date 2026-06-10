@@ -54,6 +54,23 @@ MAX_RETRIES = 4          # total attempts per page before giving up
 RETRY_BACKOFF_BASE = 3   # seconds; wait = RETRY_BACKOFF_BASE * 2^(attempt-1)
 REQUEST_TIMEOUT = 30     # seconds per HTTP request
 
+# Menu-item categories for the per-item breakdown in totals.json / snapshots.
+# A selection that passes _matches_menu_item is bucketed via _categorize_menu_item.
+# "other" catches anything that matches the broad filter but doesn't fit a named
+# category — e.g. a future fundraiser item we haven't added a rule for. If "other"
+# is ever nonzero in production it's a signal to investigate which new item appeared.
+MENU_CATEGORY_MILK_TEA = "Chaniya Taro Milk Tea"
+MENU_CATEGORY_XLB      = "Chaniya Taro XLB"
+MENU_CATEGORY_VOUCHER  = "give $10 get $10"
+MENU_CATEGORY_OTHER    = "other"
+
+MENU_CATEGORIES = (
+    MENU_CATEGORY_MILK_TEA,
+    MENU_CATEGORY_XLB,
+    MENU_CATEGORY_VOUCHER,
+    MENU_CATEGORY_OTHER,
+)
+
 
 # ---------- helpers ----------
 
@@ -79,6 +96,29 @@ def _matches_menu_item(name) -> bool:
     if "give $10" in lowered and "get $10" in lowered:
         return True
     return False
+
+
+def _categorize_menu_item(name) -> str:
+    """Bucket a fundraiser menu item into one of the named MENU_CATEGORIES.
+
+    Assumes the name has already passed _matches_menu_item. Order matters:
+    the voucher check runs before milk-tea / XLB so that the SD item literally
+    named "Chaniya Campaign: give $10 get $10" lands in the voucher bucket
+    instead of being miscategorized by a chaniya-prefix coincidence.
+    """
+    lowered = (name or "").lower()
+    if "give $10" in lowered and "get $10" in lowered:
+        return MENU_CATEGORY_VOUCHER
+    if "milk tea" in lowered:
+        return MENU_CATEGORY_MILK_TEA
+    if "xlb" in lowered:
+        return MENU_CATEGORY_XLB
+    return MENU_CATEGORY_OTHER
+
+
+def _empty_category_totals() -> dict:
+    """Fresh dict with every named MENU_CATEGORY initialized to Decimal(0)."""
+    return {cat: Decimal(0) for cat in MENU_CATEGORIES}
 
 
 def _make_session(token: str) -> requests.Session:
@@ -172,15 +212,21 @@ def _fetch_orders_for_store(session, store, start_dt, end_dt):
         page += 1
 
 
-def _selection_contribution(sel) -> Decimal:
-    """Net contribution (post-discount, post-refund) of one selection, or 0 if it doesn't apply."""
+def _selection_contribution(sel):
+    """Net contribution + category bucket of one selection.
+
+    Returns (category, contribution_decimal). If the selection doesn't apply
+    (voided, or not a fundraiser item) returns (None, Decimal(0)) so callers
+    can cheaply skip it.
+    """
     if sel.get("voided"):
-        return Decimal(0)
-    if not _matches_menu_item(sel.get("displayName")):
-        return Decimal(0)
+        return None, Decimal(0)
+    name = sel.get("displayName")
+    if not _matches_menu_item(name):
+        return None, Decimal(0)
     price = Decimal(str(sel.get("price") or 0))
     refund = Decimal(str((sel.get("refundDetails") or {}).get("refundAmount") or 0))
-    return price - refund
+    return _categorize_menu_item(name), price - refund
 
 
 def _service_charge_contribution(sc) -> Decimal:
@@ -193,23 +239,30 @@ def _service_charge_contribution(sc) -> Decimal:
 
 
 def _process_order(order):
-    """Return (menu_item_total, round_up_total) for one order."""
-    menu_total = Decimal(0)
+    """Return (menu_by_category, round_up_total) for one order.
+
+    menu_by_category is a dict keyed by MENU_CATEGORIES with Decimal values —
+    each named bucket plus an "other" catch-all. round_up_total is the net
+    fundraising service-charge amount on the order.
+    """
+    menu_by_cat = _empty_category_totals()
     round_up_total = Decimal(0)
     if order.get("deleted"):
-        return menu_total, round_up_total
+        return menu_by_cat, round_up_total
     for check in order.get("checks", []):
         if check.get("voided") or check.get("deleted"):
             continue
         for sel in check.get("selections", []):
-            menu_total += _selection_contribution(sel)
+            category, contribution = _selection_contribution(sel)
+            if category is not None:
+                menu_by_cat[category] += contribution
         for sc in check.get("appliedServiceCharges", []):
             round_up_total += _service_charge_contribution(sc)
-    return menu_total, round_up_total
+    return menu_by_cat, round_up_total
 
 
 def _fetch_brand(cred, start_dt, end_dt):
-    """Walk every store in a brand and sum fundraiser contributions."""
+    """Walk every store in a brand and sum fundraiser contributions, including per-item categories."""
     brand = cred["brand"]
     logger.info("Authenticating %s...", brand)
     token = get_access_token(cred["clientId"], cred["clientSecret"], cred["userAccessType"])
@@ -217,30 +270,36 @@ def _fetch_brand(cred, start_dt, end_dt):
 
     summary = {
         "menu_item_sales": Decimal(0),
+        "menu_item_sales_by_category": _empty_category_totals(),
         "round_ups": Decimal(0),
         "by_store": {},
     }
 
     for store in BRAND_STORES[brand]:
-        store_menu = Decimal(0)
+        store_by_cat = _empty_category_totals()
         store_round = Decimal(0)
         n_orders = 0
         for order in _fetch_orders_for_store(session, store, start_dt, end_dt):
-            m, r = _process_order(order)
-            store_menu += m
+            order_by_cat, r = _process_order(order)
+            for cat, amount in order_by_cat.items():
+                store_by_cat[cat] += amount
             store_round += r
             n_orders += 1
-        summary["menu_item_sales"] += store_menu
+        store_menu_total = sum(store_by_cat.values(), Decimal(0))
+        summary["menu_item_sales"] += store_menu_total
         summary["round_ups"] += store_round
+        for cat, amount in store_by_cat.items():
+            summary["menu_item_sales_by_category"][cat] += amount
         summary["by_store"][store["store_code"]] = {
             "name": store["name"],
             "n_orders": n_orders,
-            "menu_item_sales": float(store_menu),
+            "menu_item_sales": float(store_menu_total),
+            "menu_item_sales_by_category": {cat: float(v) for cat, v in store_by_cat.items()},
             "round_ups": float(store_round),
         }
         logger.info(
             "  %s/%s: %s orders, menu=$%.2f, round-ups=$%.2f",
-            brand, store["store_code"], n_orders, store_menu, store_round,
+            brand, store["store_code"], n_orders, store_menu_total, store_round,
         )
 
     return summary
@@ -264,14 +323,32 @@ def fetch_total(window_start: datetime, window_end: datetime) -> dict:
                 "fetched_at_utc": ISO 8601 string,
                 "raw_breakdown": {
                     "menu_item_sales": float,
+                    "menu_item_sales_by_category": {
+                        "Chaniya Taro Milk Tea": float,
+                        "Chaniya Taro XLB": float,
+                        "give $10 get $10": float,
+                        "other": float,
+                    },
                     "round_ups": float,
-                    "by_brand": { brand: { menu_item_sales, round_ups, by_store } }
+                    "by_brand": {
+                        brand: {
+                            "menu_item_sales": float,
+                            "menu_item_sales_by_category": {...same shape...},
+                            "round_ups": float,
+                            "by_store": {
+                                store_code: {
+                                    ..., "menu_item_sales_by_category": {...}
+                                }
+                            },
+                        }
+                    }
                 }
             }
     """
     assert_credentials_loaded()
 
     grand_menu = Decimal(0)
+    grand_menu_by_cat = _empty_category_totals()
     grand_round = Decimal(0)
     by_brand = {}
 
@@ -279,11 +356,14 @@ def fetch_total(window_start: datetime, window_end: datetime) -> dict:
         s = _fetch_brand(cred, window_start, window_end)
         by_brand[cred["brand"]] = {
             "menu_item_sales": float(s["menu_item_sales"]),
+            "menu_item_sales_by_category": {cat: float(v) for cat, v in s["menu_item_sales_by_category"].items()},
             "round_ups": float(s["round_ups"]),
             "by_store": s["by_store"],
         }
         grand_menu += s["menu_item_sales"]
         grand_round += s["round_ups"]
+        for cat, amount in s["menu_item_sales_by_category"].items():
+            grand_menu_by_cat[cat] += amount
 
     total = grand_menu + grand_round
     return {
@@ -293,6 +373,7 @@ def fetch_total(window_start: datetime, window_end: datetime) -> dict:
         "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
         "raw_breakdown": {
             "menu_item_sales": float(grand_menu),
+            "menu_item_sales_by_category": {cat: float(v) for cat, v in grand_menu_by_cat.items()},
             "round_ups": float(grand_round),
             "by_brand": by_brand,
         },
@@ -330,4 +411,6 @@ if __name__ == "__main__":
     print(json.dumps(result, indent=2))
     print(f"\nGrand total: ${result['campaign_total']:.2f}")
     print(f"  menu items: ${result['raw_breakdown']['menu_item_sales']:.2f}")
+    for cat, amount in result['raw_breakdown']['menu_item_sales_by_category'].items():
+        print(f"    {cat}: ${amount:.2f}")
     print(f"  round-ups:  ${result['raw_breakdown']['round_ups']:.2f}")
