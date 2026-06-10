@@ -22,3 +22,6 @@ Thumbs.db
 
 # Local-only Toast uploads (the original files with secrets in them)
 toast config.py
+
+# Local-only Marketing handoff doc (kept on disk, never pushed)
+MARKETING_EMBED.md
