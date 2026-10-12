@@ -7,8 +7,8 @@
   },
   "grand_total": 44675.68,
   "currency": "USD",
-  "fetched_at_utc": "2026-10-12T06:27:01.704414+00:00",
-  "degraded": false,
+  "fetched_at_utc": "2026-10-12T16:01:19.547352+00:00",
+  "degraded": true,
   "by_source": {
     "toast": {
       "source": "toast",
@@ -303,13 +303,15 @@
           }
         }
       },
-      "failed": false
+      "failed": true,
+      "failure_reason": "Kizuki Legacy: HTTP 401 on page 10 after 4 attempts: {\"status\":401,\"code\":10016,\"message\":\"Authentication failed\",\"messageKey\":null,\"fieldName\":null,\"link\":null,\"requestId\":\"821c93b9-8e96-46f6-98cb-69a1758d29a5\",\"developerMessage\":\"Authentication failed\",\"errors\":[],\"canRetry\":null}",
+      "stale_since_utc": "2026-10-12T06:46:28.507860+00:00"
     },
     "shopify": {
       "source": "shopify",
       "campaign_total": 473.8,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-12T06:46:29.066903+00:00",
+      "fetched_at_utc": "2026-10-12T16:15:35.673165+00:00",
       "raw_breakdown": {
         "subtotal_minus_refunds": 473.8,
         "n_orders_scanned": 5,
@@ -322,7 +324,7 @@
       "source": "stripe",
       "campaign_total": 1318.0,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-12T06:46:34.459487+00:00",
+      "fetched_at_utc": "2026-10-12T16:15:40.577629+00:00",
       "raw_breakdown": {
         "net_amount": 1318.0,
         "n_sessions_scanned": 448,
@@ -336,7 +338,7 @@
       "source": "gofundme",
       "campaign_total": 15262.0,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-12T06:46:35.008276+00:00",
+      "fetched_at_utc": "2026-10-12T16:15:41.121410+00:00",
       "raw_breakdown": {
         "raised_all_time": 15262.0,
         "campaign_url": "https://www.gofundme.com/f/standing-with-chaniya-through-her-recovery",
