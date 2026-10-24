@@ -1,0 +1,348 @@
+{
+  "campaign": "chaniya-may-2026",
+  "campaign_window_local": {
+    "start": "2026-05-01T00:00:00-07:00",
+    "end": "2026-06-01T00:00:00-07:00",
+    "timezone": "America/Los_Angeles"
+  },
+  "grand_total": 44675.68,
+  "currency": "USD",
+  "fetched_at_utc": "2026-10-24T18:20:07.215764+00:00",
+  "degraded": false,
+  "by_source": {
+    "toast": {
+      "source": "toast",
+      "campaign_total": 27621.88,
+      "currency": "USD",
+      "fetched_at_utc": "2026-10-24T18:42:12.563513+00:00",
+      "raw_breakdown": {
+        "menu_item_sales": 24111.72,
+        "menu_item_sales_by_category": {
+          "Chaniya Taro Milk Tea": 19526.27,
+          "Chaniya Taro XLB": 3949.66,
+          "give $10 get $10": 635.65,
+          "other": 0.14
+        },
+        "round_ups": 3510.16,
+        "by_brand": {
+          "Kizuki": {
+            "menu_item_sales": 17908.54,
+            "menu_item_sales_by_category": {
+              "Chaniya Taro Milk Tea": 17292.75,
+              "Chaniya Taro XLB": 0.0,
+              "give $10 get $10": 615.65,
+              "other": 0.14
+            },
+            "round_ups": 2856.49,
+            "by_store": {
+              "BKBEL": {
+                "name": "Kizuki Bellevue",
+                "n_orders": 4167,
+                "menu_item_sales": 1215.98,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 1082.19,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 133.79,
+                  "other": 0.0
+                },
+                "round_ups": 210.51
+              },
+              "CHSLU": {
+                "name": "Kizuki Capitol Hill",
+                "n_orders": 4257,
+                "menu_item_sales": 476.12,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 448.23,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 27.89,
+                  "other": 0.0
+                },
+                "round_ups": 97.21
+              },
+              "REDMN": {
+                "name": "Kizuki Redmond",
+                "n_orders": 6103,
+                "menu_item_sales": 2252.7,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 2155.7,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 97.0,
+                  "other": 0.0
+                },
+                "round_ups": 230.68
+              },
+              "WSEAT": {
+                "name": "Kizuki West Seattle",
+                "n_orders": 2703,
+                "menu_item_sales": 255.0,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 255.0,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 104.39
+              },
+              "KZALD": {
+                "name": "Kizuki Alderwood Mall",
+                "n_orders": 6470,
+                "menu_item_sales": 2001.78,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 1946.78,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 55.0,
+                  "other": 0.0
+                },
+                "round_ups": 259.0
+              },
+              "BSQML": {
+                "name": "Kizuki Bellevue Square",
+                "n_orders": 6322,
+                "menu_item_sales": 243.16,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 243.16,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 220.41
+              },
+              "NGKMD": {
+                "name": "Kizuki Northgate",
+                "n_orders": 5343,
+                "menu_item_sales": 1721.72,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 1671.72,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 50.0,
+                  "other": 0.0
+                },
+                "round_ups": 201.28
+              },
+              "RNTCK": {
+                "name": "Kizuki Renton",
+                "n_orders": 2264,
+                "menu_item_sales": 549.42,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 539.42,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 10.0,
+                  "other": 0.0
+                },
+                "round_ups": 100.59
+              },
+              "SCMLL": {
+                "name": "Kizuki South Center",
+                "n_orders": 4659,
+                "menu_item_sales": 1708.6,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 1641.67,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 66.79,
+                  "other": 0.14
+                },
+                "round_ups": 248.63
+              },
+              "TCMLL": {
+                "name": "Kizuki Tacoma",
+                "n_orders": 5067,
+                "menu_item_sales": 1757.58,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 1757.58,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 339.37
+              },
+              "BVORG": {
+                "name": "Kizuki Beaverton",
+                "n_orders": 4824,
+                "menu_item_sales": 1900.15,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 1814.97,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 85.18,
+                  "other": 0.0
+                },
+                "round_ups": 284.79
+              },
+              "PFHDX": {
+                "name": "Kizuki Portland Food Hall",
+                "n_orders": 2744,
+                "menu_item_sales": 480.85,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 480.85,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 119.99
+              },
+              "UPORG": {
+                "name": "Kizuki Uptown",
+                "n_orders": 2503,
+                "menu_item_sales": 1369.8,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 1299.8,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 70.0,
+                  "other": 0.0
+                },
+                "round_ups": 133.52
+              },
+              "KTTEX": {
+                "name": "Kizuki Katy",
+                "n_orders": 4506,
+                "menu_item_sales": 1959.18,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 1939.18,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 20.0,
+                  "other": 0.0
+                },
+                "round_ups": 252.1
+              },
+              "LGTEX": {
+                "name": "Kizuki Legacy",
+                "n_orders": 1215,
+                "menu_item_sales": 0.0,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 0.0,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 54.02
+              },
+              "KZCST": {
+                "name": "Kizuki Stonestown",
+                "n_orders": 5878,
+                "menu_item_sales": 16.5,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 16.5,
+                  "Chaniya Taro XLB": 0.0,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 0.0
+              }
+            }
+          },
+          "SD": {
+            "menu_item_sales": 6203.18,
+            "menu_item_sales_by_category": {
+              "Chaniya Taro Milk Tea": 2233.52,
+              "Chaniya Taro XLB": 3949.66,
+              "give $10 get $10": 20.0,
+              "other": 0.0
+            },
+            "round_ups": 653.67,
+            "by_store": {
+              "SDBEL": {
+                "name": "Supreme Dumplings Bellevue",
+                "n_orders": 3968,
+                "menu_item_sales": 2613.04,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 892.46,
+                  "Chaniya Taro XLB": 1700.58,
+                  "give $10 get $10": 20.0,
+                  "other": 0.0
+                },
+                "round_ups": 196.25
+              },
+              "SDKLD": {
+                "name": "Supreme Dumplings Kirkland",
+                "n_orders": 2409,
+                "menu_item_sales": 870.29,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 342.91,
+                  "Chaniya Taro XLB": 527.38,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 90.21
+              },
+              "SDSLU": {
+                "name": "Supreme Dumplings SLU",
+                "n_orders": 5590,
+                "menu_item_sales": 1612.25,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 608.75,
+                  "Chaniya Taro XLB": 1003.5,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 220.09
+              },
+              "SDCST": {
+                "name": "Supreme Dumplings Stonestown",
+                "n_orders": 4615,
+                "menu_item_sales": 9.0,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 0.0,
+                  "Chaniya Taro XLB": 9.0,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 0.0
+              },
+              "SDTKT": {
+                "name": "Supreme Dumplings Katy",
+                "n_orders": 3011,
+                "menu_item_sales": 1098.6,
+                "menu_item_sales_by_category": {
+                  "Chaniya Taro Milk Tea": 389.4,
+                  "Chaniya Taro XLB": 709.2,
+                  "give $10 get $10": 0.0,
+                  "other": 0.0
+                },
+                "round_ups": 147.12
+              }
+            }
+          }
+        }
+      },
+      "failed": false
+    },
+    "shopify": {
+      "source": "shopify",
+      "campaign_total": 473.8,
+      "currency": "USD",
+      "fetched_at_utc": "2026-10-24T18:42:13.145500+00:00",
+      "raw_breakdown": {
+        "subtotal_minus_refunds": 473.8,
+        "n_orders_scanned": 5,
+        "n_orders_skipped_test_or_cancelled": 1,
+        "n_orders_with_refunds": 1
+      },
+      "failed": false
+    },
+    "stripe": {
+      "source": "stripe",
+      "campaign_total": 1318.0,
+      "currency": "USD",
+      "fetched_at_utc": "2026-10-24T18:42:17.917594+00:00",
+      "raw_breakdown": {
+        "net_amount": 1318.0,
+        "n_sessions_scanned": 448,
+        "n_sessions_paid": 68,
+        "n_sessions_incomplete_or_unpaid": 380,
+        "payment_link_id": "plink_1TTsaNEe7HY40ApxM8pRwvX2"
+      },
+      "failed": false
+    },
+    "gofundme": {
+      "source": "gofundme",
+      "campaign_total": 15262.0,
+      "currency": "USD",
+      "fetched_at_utc": "2026-10-24T18:42:18.455710+00:00",
+      "raw_breakdown": {
+        "raised_all_time": 15262.0,
+        "campaign_url": "https://www.gofundme.com/f/standing-with-chaniya-through-her-recovery",
+        "parse_strategy": "json_currentAmount"
+      },
+      "failed": false
+    }
+  }
+}
