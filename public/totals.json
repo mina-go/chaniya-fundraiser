@@ -7,14 +7,14 @@
   },
   "grand_total": 44675.68,
   "currency": "USD",
-  "fetched_at_utc": "2026-10-25T10:05:20.000182+00:00",
+  "fetched_at_utc": "2026-10-25T14:32:31.389159+00:00",
   "degraded": false,
   "by_source": {
     "toast": {
       "source": "toast",
       "campaign_total": 27621.88,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-25T10:27:21.260900+00:00",
+      "fetched_at_utc": "2026-10-25T14:52:06.890473+00:00",
       "raw_breakdown": {
         "menu_item_sales": 24111.72,
         "menu_item_sales_by_category": {
@@ -309,7 +309,7 @@
       "source": "shopify",
       "campaign_total": 473.8,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-25T10:27:22.173951+00:00",
+      "fetched_at_utc": "2026-10-25T14:52:07.352144+00:00",
       "raw_breakdown": {
         "subtotal_minus_refunds": 473.8,
         "n_orders_scanned": 5,
@@ -322,7 +322,7 @@
       "source": "stripe",
       "campaign_total": 1318.0,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-25T10:27:25.872698+00:00",
+      "fetched_at_utc": "2026-10-25T14:52:11.142035+00:00",
       "raw_breakdown": {
         "net_amount": 1318.0,
         "n_sessions_scanned": 448,
@@ -336,7 +336,7 @@
       "source": "gofundme",
       "campaign_total": 15262.0,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-25T10:27:26.454973+00:00",
+      "fetched_at_utc": "2026-10-25T14:52:11.606431+00:00",
       "raw_breakdown": {
         "raised_all_time": 15262.0,
         "campaign_url": "https://www.gofundme.com/f/standing-with-chaniya-through-her-recovery",
