@@ -7,8 +7,8 @@
   },
   "grand_total": 44775.68,
   "currency": "USD",
-  "fetched_at_utc": "2026-10-28T19:49:32.755129+00:00",
-  "degraded": false,
+  "fetched_at_utc": "2026-10-29T00:21:01.736820+00:00",
+  "degraded": true,
   "by_source": {
     "toast": {
       "source": "toast",
@@ -303,13 +303,15 @@
           }
         }
       },
-      "failed": false
+      "failed": true,
+      "failure_reason": "Kizuki West Seattle: HTTP 403 on page 1 after 4 attempts: {\"status\":403,\"code\":10010,\"message\":\"You are not permitted to access this resource\",\"messageKey\":\"You are not permitted to access this resource\",\"fieldName\":null,\"link\":\"You are not permitted to access this resource\",\"requestId\":\"7cb6a422-ae6e-4101-9190-3c7fd56360cd\",\"developerMessage\":null,\"errors",
+      "stale_since_utc": "2026-10-28T20:10:22.032018+00:00"
     },
     "shopify": {
       "source": "shopify",
       "campaign_total": 473.8,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-28T20:10:22.975528+00:00",
+      "fetched_at_utc": "2026-10-29T00:24:35.681066+00:00",
       "raw_breakdown": {
         "subtotal_minus_refunds": 473.8,
         "n_orders_scanned": 5,
@@ -322,7 +324,7 @@
       "source": "stripe",
       "campaign_total": 1318.0,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-28T20:10:27.606666+00:00",
+      "fetched_at_utc": "2026-10-29T00:24:39.686775+00:00",
       "raw_breakdown": {
         "net_amount": 1318.0,
         "n_sessions_scanned": 448,
@@ -336,7 +338,7 @@
       "source": "gofundme",
       "campaign_total": 15362.0,
       "currency": "USD",
-      "fetched_at_utc": "2026-10-28T20:10:28.141108+00:00",
+      "fetched_at_utc": "2026-10-29T00:24:40.251823+00:00",
       "raw_breakdown": {
         "raised_all_time": 15362.0,
         "campaign_url": "https://www.gofundme.com/f/standing-with-chaniya-through-her-recovery",
