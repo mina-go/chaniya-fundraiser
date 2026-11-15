@@ -7,7 +7,7 @@
   },
   "grand_total": 44775.68,
   "currency": "USD",
-  "fetched_at_utc": "2026-11-15T17:57:09.363193+00:00",
+  "fetched_at_utc": "2026-11-15T23:07:20.239080+00:00",
   "degraded": true,
   "by_source": {
     "toast": {
@@ -304,14 +304,14 @@
         }
       },
       "failed": true,
-      "failure_reason": "Kizuki West Seattle: HTTP 403 on page 1 after 4 attempts: {\"status\":403,\"code\":10010,\"message\":\"You are not permitted to access this resource\",\"messageKey\":\"You are not permitted to access this resource\",\"fieldName\":null,\"link\":\"You are not permitted to access this resource\",\"requestId\":\"15dd15f0-72dc-4223-94a4-6534d35e1800\",\"developerMessage\":null,\"errors",
+      "failure_reason": "Kizuki West Seattle: HTTP 403 on page 1 after 4 attempts: {\"status\":403,\"code\":10010,\"message\":\"You are not permitted to access this resource\",\"messageKey\":\"You are not permitted to access this resource\",\"fieldName\":null,\"link\":\"You are not permitted to access this resource\",\"requestId\":\"9d833b7a-fc2f-4a45-bb4d-0fe2d5271859\",\"developerMessage\":null,\"errors",
       "stale_since_utc": "2026-10-28T20:10:22.032018+00:00"
     },
     "shopify": {
       "source": "shopify",
       "campaign_total": 473.8,
       "currency": "USD",
-      "fetched_at_utc": "2026-11-15T18:01:37.120830+00:00",
+      "fetched_at_utc": "2026-11-15T23:10:43.745091+00:00",
       "raw_breakdown": {
         "subtotal_minus_refunds": 473.8,
         "n_orders_scanned": 5,
@@ -324,7 +324,7 @@
       "source": "stripe",
       "campaign_total": 1318.0,
       "currency": "USD",
-      "fetched_at_utc": "2026-11-15T18:01:41.513089+00:00",
+      "fetched_at_utc": "2026-11-15T23:10:47.473328+00:00",
       "raw_breakdown": {
         "net_amount": 1318.0,
         "n_sessions_scanned": 448,
@@ -338,7 +338,7 @@
       "source": "gofundme",
       "campaign_total": 15362.0,
       "currency": "USD",
-      "fetched_at_utc": "2026-11-15T18:01:41.990248+00:00",
+      "fetched_at_utc": "2026-11-15T23:10:47.845038+00:00",
       "raw_breakdown": {
         "raised_all_time": 15362.0,
         "campaign_url": "https://www.gofundme.com/f/standing-with-chaniya-through-her-recovery",
